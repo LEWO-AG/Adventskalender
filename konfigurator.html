@@ -1,0 +1,883 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Adventskalender Konfigurator - LEWO AG</title>
+    <style>
+        /* ========================================== CSS RESET ========================================== */
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #333;
+        }
+
+        /* ========================================== CONTAINER ========================================== */
+        .konfigurator-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+
+        /* ========================================== HEADER ========================================== */
+        .header {
+            background: linear-gradient(135deg, #B22222 0%, #8B0000 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 { font-size: 2.5rem; margin-bottom: 10px; }
+        .header p { font-size: 1.1rem; opacity: 0.9; }
+
+        /* ========================================== MAIN CONTENT ========================================== */
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            padding: 30px;
+        }
+
+        .section {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 20px;
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            color: #B22222;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section-number {
+            background: #B22222;
+            color: white;
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+
+        /* ========================================== FORMS ========================================== */
+        .form-group { margin-bottom: 20px; }
+        .form-label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #333;
+        }
+
+        .form-help {
+            display: block;
+            font-size: 0.85rem;
+            color: #666;
+            margin-bottom: 8px;
+            font-style: italic;
+        }
+
+        .form-input, .form-select, .form-textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+
+        .form-input:focus, .form-select:focus, .form-textarea:focus {
+            outline: none;
+            border-color: #B22222;
+        }
+
+        .form-textarea {
+            min-height: 100px;
+            resize: vertical;
+            font-family: inherit;
+        }
+
+        /* ========================================== BUTTONS ========================================== */
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary { background: #B22222; color: white; }
+        .btn-primary:hover { background: #8B0000; transform: translateY(-2px); box-shadow: 0 4px 12px rgba(178, 34, 34, 0.3); }
+        .btn-secondary { background: #6c757d; color: white; }
+        .btn-secondary:hover { background: #5a6268; }
+        .btn-success { background: #28a745; color: white; }
+        .btn-success:hover { background: #218838; }
+        .btn-block { width: 100%; justify-content: center; }
+
+        /* ========================================== THEME PREVIEW ========================================== */
+        .theme-preview {
+            margin-top: 15px;
+            border-radius: 12px;
+            overflow: hidden;
+            height: 200px;
+            background-size: cover;
+            background-position: center;
+            position: relative;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        }
+
+        .theme-preview::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: rgba(0,0,0,0.3);
+        }
+
+        .theme-preview-label {
+            position: absolute;
+            bottom: 15px;
+            left: 15px;
+            color: white;
+            font-weight: 600;
+            font-size: 1.2rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+            z-index: 1;
+        }
+
+        /* ========================================== PROGRESS ========================================== */
+        .progress-container { margin-bottom: 20px; }
+        .progress-bar {
+            width: 100%;
+            height: 30px;
+            background: #e9ecef;
+            border-radius: 15px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #28a745 0%, #20c997 100%);
+            transition: width 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        /* ========================================== ACCORDION ========================================== */
+        .accordion {
+            max-height: 600px;
+            overflow-y: auto;
+            padding-right: 10px;
+        }
+
+        .accordion::-webkit-scrollbar { width: 8px; }
+        .accordion::-webkit-scrollbar-track { background: #f1f1f1; border-radius: 4px; }
+        .accordion::-webkit-scrollbar-thumb { background: #B22222; border-radius: 4px; }
+
+        .accordion-item {
+            background: white;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            overflow: hidden;
+            border: 2px solid #ddd;
+        }
+
+        .accordion-header {
+            padding: 15px 20px;
+            background: #f8f9fa;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: background 0.3s;
+        }
+
+        .accordion-header:hover { background: #e9ecef; }
+        .accordion-header.filled { background: #d4edda; border-left: 4px solid #28a745; }
+        .accordion-title { font-weight: 600; font-size: 1.1rem; }
+        .accordion-icon { transition: transform 0.3s; }
+        .accordion-header.active .accordion-icon { transform: rotate(180deg); }
+
+        .accordion-body {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+        }
+
+        .accordion-body.active { max-height: 800px; }
+        .accordion-content { padding: 20px; }
+
+        /* ========================================== PREVIEW AREA ========================================== */
+        .preview-area {
+            position: sticky;
+            top: 20px;
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 25px;
+            height: fit-content;
+        }
+
+        .preview-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: #333;
+        }
+
+        .preview-info {
+            background: #fff;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            border-left: 4px solid #B22222;
+        }
+
+        .action-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .checkbox-group input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+        }
+
+        /* ========================================== RESPONSIVE ========================================== */
+        @media (max-width: 968px) {
+            .main-content { grid-template-columns: 1fr; }
+            .preview-area { position: static; }
+            .action-buttons { grid-template-columns: 1fr; }
+        }
+
+        .text-muted { color: #6c757d; }
+        .mt-2 { margin-top: 20px; }
+    </style>
+</head>
+<body>
+    <div class="konfigurator-container">
+        <div class="header">
+            <h1>🎄 Adventskalender Konfigurator</h1>
+            <p>Erstellen Sie Ihren individuellen Adventskalender für die LEWO AG</p>
+        </div>
+
+        <div class="main-content">
+            <div class="config-area">
+                <!-- SCHRITT 1 -->
+                <div class="section">
+                    <h2 class="section-title">
+                        <span class="section-number">1</span>
+                        Theme auswählen
+                    </h2>
+                    <div class="form-group">
+                        <label class="form-label" for="theme-select">Weihnachts-Theme</label>
+                        <span class="form-help">Wählen Sie ein vordefiniertes Design</span>
+                        <select id="theme-select" class="form-select">
+                            <option value="klassisch">Klassisch – Weihnachtswohnzimmer</option>
+                            <option value="winterwald">Winterwald – Verschneite Nacht</option>
+                            <option value="weihnachtsmarkt">Weihnachtsmarkt – Festliche Stadt</option>
+                            <option value="nordpol">Nordpol – Santas Werkstatt</option>
+                            <option value="eleganz">Eleganz – Modernes Weihnachten</option>
+                        </select>
+                    </div>
+                    <div id="theme-preview" class="theme-preview">
+                        <div class="theme-preview-label">Theme-Vorschau</div>
+                    </div>
+                    <div class="checkbox-group mt-2">
+                        <input type="checkbox" id="custom-bg-checkbox">
+                        <label for="custom-bg-checkbox">Eigenes Hintergrundbild verwenden</label>
+                    </div>
+                    <div class="form-group" id="custom-bg-group" style="display: none;">
+                        <label class="form-label" for="custom-bg-url">URL zum Hintergrundbild</label>
+                        <span class="form-help">Vollständige URL zu Ihrem Hintergrundbild</span>
+                        <input type="text" id="custom-bg-url" class="form-input" placeholder="https://...">
+                    </div>
+                </div>
+
+                <!-- SCHRITT 2 -->
+                <div class="section">
+                    <h2 class="section-title">
+                        <span class="section-number">2</span>
+                        Globale Einstellungen
+                    </h2>
+                    <div class="form-group">
+                        <label class="form-label" for="base-url">Basis-URL für Bilder *</label>
+                        <span class="form-help" style="display: block; margin-bottom: 8px;">
+                            <strong>Option 1 - Relativer Pfad (EMPFOHLEN):</strong><br>
+                            Wenn HTML und Bilder im gleichen Verzeichnis liegen: <code>bilder/</code> oder <code>Bilder_advent/</code><br>
+                            <br>
+                            <strong>Option 2 - SharePoint (wenn HTML auf SharePoint liegt):</strong><br>
+                            <code>Bilder_advent/</code> (relative Pfad auf SharePoint)<br>
+                            <br>
+                            <strong>Option 3 - SharePoint absolute URL (funktioniert NUR wenn eingeloggt):</strong><br>
+                            <code>https://firma.sharepoint.com/sites/xyz/Freigegebene%20Dokumente/Bilder_advent/</code><br>
+                            <br>
+                            <strong>Wichtig:</strong> Pfad muss mit <strong>/</strong> enden!
+                        </span>
+                        <input type="text" id="base-url" class="form-input"
+                               placeholder="bilder/">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="calendar-title">Kalender-Titel (optional)</label>
+                        <span class="form-help">Wird über dem Kalender angezeigt</span>
+                        <input type="text" id="calendar-title" class="form-input"
+                               placeholder="z.B. LEWO Adventskalender 2025">
+                    </div>
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="debug-mode-checkbox">
+                        <label for="debug-mode-checkbox"><strong>Debug-Modus</strong> (Alle Türchen sofort verfügbar - nur für Tests!)</label>
+                    </div>
+                </div>
+
+                <!-- SCHRITT 3 -->
+                <div class="section">
+                    <h2 class="section-title">
+                        <span class="section-number">3</span>
+                        Türchen konfigurieren
+                    </h2>
+                    <div class="progress-container">
+                        <div class="progress-bar">
+                            <div id="progress-fill" class="progress-fill" style="width: 0%;">
+                                0/24 Türchen befüllt
+                            </div>
+                        </div>
+                    </div>
+                    <div id="accordion" class="accordion"></div>
+                </div>
+            </div>
+
+            <!-- RECHTE SPALTE -->
+            <div class="preview-area">
+                <h3 class="preview-title">📋 Aktionen</h3>
+                <div class="preview-info">
+                    <p><strong>Konfiguration verwalten:</strong></p>
+                    <p class="text-muted" style="font-size: 0.9rem; margin-top: 8px;">
+                        Speichern Sie Ihre Konfiguration als JSON
+                    </p>
+                </div>
+                <button class="btn btn-secondary btn-block" onclick="saveConfigAsJSON()">
+                    💾 Konfiguration als JSON speichern
+                </button>
+                <button class="btn btn-secondary btn-block mt-2" onclick="document.getElementById('json-upload').click()">
+                    📂 Konfiguration aus JSON laden
+                </button>
+                <input type="file" id="json-upload" accept=".json" style="display: none;">
+
+                <hr style="margin: 25px 0; border: none; border-top: 2px solid #dee2e6;">
+
+                <div class="preview-info">
+                    <p><strong>Kalender exportieren:</strong></p>
+                    <p class="text-muted" style="font-size: 0.9rem; margin-top: 8px;">
+                        Generiert die fertige HTML-Datei
+                    </p>
+                </div>
+                <button class="btn btn-success btn-block" onclick="validateConfig()">
+                    ✓ Konfiguration validieren
+                </button>
+                <button class="btn btn-primary btn-block mt-2" onclick="exportCalendar()">
+                    🎁 KALENDER EXPORTIEREN
+                </button>
+
+                <hr style="margin: 25px 0; border: none; border-top: 2px solid #dee2e6;">
+
+                <div class="preview-info">
+                    <p><strong>Hinweis:</strong></p>
+                    <p class="text-muted" style="font-size: 0.85rem; margin-top: 8px;">
+                        Bilder müssen in SharePoint hochgeladen sein
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // THEMES
+        const THEMES = {
+            klassisch: {
+                name: "Klassisch – Weihnachtswohnzimmer",
+                background: "url('https://images.unsplash.com/photo-1512389142860-9c449e58a543?w=1920&q=80')",
+                overlay: "rgba(0, 0, 0, 0.15)",
+                colors: { primary: "#B22222", secondary: "#DAA520", doorBg: "rgba(178, 34, 34, 0.85)", doorBorder: "#DAA520", doorText: "#FFF8DC", modalBg: "#FFF8DC", modalBorder: "#DAA520" },
+                doorStyle: "gift",
+                fontFamily: "'Georgia', serif",
+                borderRadius: "8px"
+            },
+            winterwald: {
+                name: "Winterwald – Verschneite Nacht",
+                background: "url('https://images.unsplash.com/photo-1483921020237-2ff51e8e4b22?w=1920&q=80')",
+                overlay: "rgba(0, 0, 0, 0.2)",
+                colors: { primary: "#A5D8FF", secondary: "#191970", doorBg: "rgba(165, 216, 255, 0.3)", doorBorder: "rgba(192, 192, 192, 0.8)", doorText: "#FFFFFF", modalBg: "rgba(255, 255, 255, 0.95)", modalBorder: "#C0C0C0" },
+                doorStyle: "crystal",
+                fontFamily: "'Arial', sans-serif",
+                borderRadius: "12px"
+            },
+            weihnachtsmarkt: {
+                name: "Weihnachtsmarkt – Festliche Stadt",
+                background: "url('https://images.unsplash.com/photo-1576919228236-a097c32a5cd4?w=1920&q=80')",
+                overlay: "rgba(0, 0, 0, 0.25)",
+                colors: { primary: "#FFD700", secondary: "#800020", doorBg: "rgba(139, 69, 19, 0.9)", doorBorder: "#8B4513", doorText: "#FFE4B5", modalBg: "#FFF8DC", modalBorder: "#8B4513" },
+                doorStyle: "wood",
+                fontFamily: "'Courier New', monospace",
+                borderRadius: "6px"
+            },
+            nordpol: {
+                name: "Nordpol – Santas Werkstatt",
+                background: "url('https://images.unsplash.com/photo-1512909006721-3d6018887383?w=1920&q=80')",
+                overlay: "rgba(0, 0, 0, 0.1)",
+                colors: { primary: "#DC143C", secondary: "#228B22", doorBg: "rgba(220, 20, 60, 0.9)", doorBorder: "#FFFFFF", doorText: "#FFFFFF", modalBg: "#FFFFFF", modalBorder: "#DC143C" },
+                doorStyle: "candy",
+                fontFamily: "'Comic Sans MS', cursive",
+                borderRadius: "12px"
+            },
+            eleganz: {
+                name: "Eleganz – Modernes Weihnachten",
+                background: "url('https://images.unsplash.com/photo-1543589077-47d81606c1bf?w=1920&q=80')",
+                overlay: "rgba(0, 0, 0, 0.3)",
+                colors: { primary: "#2D3436", secondary: "#B8860B", doorBg: "rgba(255, 255, 255, 0.95)", doorBorder: "#B8860B", doorText: "#2D3436", modalBg: "#FFFFFF", modalBorder: "#B8860B" },
+                doorStyle: "card",
+                fontFamily: "'Helvetica Neue', sans-serif",
+                borderRadius: "4px"
+            }
+        };
+
+        // CONFIG
+        let CONFIG = {
+            theme: "klassisch",
+            baseUrl: "",
+            customBackground: "",
+            title: "",
+            debugMode: false,  // Alle Türchen sofort verfügbar (für Tests)
+            doors: []
+        };
+
+        for (let i = 1; i <= 24; i++) {
+            CONFIG.doors.push({ day: i, title: "", text: "", image: "", linkUrl: "", linkText: "", overrideDate: "" });
+        }
+
+        // INIT
+        document.addEventListener('DOMContentLoaded', function() {
+            generateDoorAccordion();
+            document.getElementById('theme-select').addEventListener('change', handleThemeChange);
+            document.getElementById('custom-bg-checkbox').addEventListener('change', handleCustomBgToggle);
+            document.getElementById('custom-bg-url').addEventListener('input', handleCustomBgUrlChange);
+            document.getElementById('base-url').addEventListener('input', handleBaseUrlChange);
+            document.getElementById('calendar-title').addEventListener('input', handleTitleChange);
+            document.getElementById('debug-mode-checkbox').addEventListener('change', handleDebugModeToggle);
+            document.getElementById('json-upload').addEventListener('change', function(e) {
+                if (e.target.files[0]) loadConfigFromJSON(e.target.files[0]);
+            });
+            showThemePreview();
+            updateProgress();
+        });
+
+        // ACCORDION
+        function generateDoorAccordion() {
+            const accordion = document.getElementById('accordion');
+            for (let i = 1; i <= 24; i++) {
+                const item = document.createElement('div');
+                item.className = 'accordion-item';
+                item.innerHTML = '<div class="accordion-header" onclick="toggleAccordion(' + i + ')"><span class="accordion-title">Türchen ' + i + '</span><span class="accordion-icon">▼</span></div><div class="accordion-body" id="accordion-body-' + i + '"><div class="accordion-content"><div class="form-group"><label class="form-label">Titel (optional)</label><input type="text" class="form-input" id="door-' + i + '-title" placeholder="z.B. Türchen ' + i + '" onchange="updateDoorData(' + i + ', \'title\', this.value)"></div><div class="form-group"><label class="form-label">Text-Inhalt</label><textarea class="form-textarea" id="door-' + i + '-text" placeholder="Ihr Text..." onchange="updateDoorData(' + i + ', \'text\', this.value)"></textarea></div><div class="form-group"><label class="form-label">Bild im Modal (optional)</label><span class="form-help">Wird angezeigt, wenn Türchen geöffnet wird. Nur Dateiname eingeben (z.B. "bild.jpg"), wird mit Basis-URL kombiniert.</span><input type="text" class="form-input" id="door-' + i + '-image" placeholder="bild' + i + '.jpg" onchange="updateDoorData(' + i + ', \'image\', this.value)"></div><div class="form-group"><label class="form-label">Link-URL (optional)</label><input type="text" class="form-input" id="door-' + i + '-linkUrl" placeholder="https://..." onchange="updateDoorData(' + i + ', \'linkUrl\', this.value)"></div><div class="form-group"><label class="form-label">Link-Button-Text (optional)</label><input type="text" class="form-input" id="door-' + i + '-linkText" placeholder="Mehr erfahren" onchange="updateDoorData(' + i + ', \'linkText\', this.value)"></div></div></div>';
+                accordion.appendChild(item);
+            }
+        }
+
+        function toggleAccordion(n) {
+            const header = document.querySelector('#accordion-body-' + n).previousElementSibling;
+            const body = document.getElementById('accordion-body-' + n);
+            document.querySelectorAll('.accordion-body').forEach(b => {
+                if (b !== body) {
+                    b.classList.remove('active');
+                    b.previousElementSibling.classList.remove('active');
+                }
+            });
+            header.classList.toggle('active');
+            body.classList.toggle('active');
+        }
+
+        function updateDoorData(n, field, value) {
+            const door = CONFIG.doors.find(d => d.day === n);
+            if (door) {
+                door[field] = value;
+                updateProgress();
+                checkDoorFilled(n);
+            }
+        }
+
+        function checkDoorFilled(n) {
+            const door = CONFIG.doors.find(d => d.day === n);
+            const header = document.querySelector('#accordion-body-' + n).previousElementSibling;
+            if (door && (door.title || door.text || door.image)) {
+                header.classList.add('filled');
+            } else {
+                header.classList.remove('filled');
+            }
+        }
+
+        function updateProgress() {
+            let filled = 0;
+            CONFIG.doors.forEach(door => {
+                if (door.title || door.text || door.image) filled++;
+            });
+            const percentage = (filled / 24) * 100;
+            const progressFill = document.getElementById('progress-fill');
+            progressFill.style.width = percentage + '%';
+            progressFill.textContent = filled + '/24 Türchen befüllt';
+        }
+
+        // THEME
+        function handleThemeChange(e) {
+            CONFIG.theme = e.target.value;
+            showThemePreview();
+        }
+
+        function showThemePreview() {
+            const theme = THEMES[CONFIG.theme];
+            const preview = document.getElementById('theme-preview');
+            if (CONFIG.customBackground) {
+                preview.style.backgroundImage = "url('" + CONFIG.customBackground + "')";
+            } else {
+                preview.style.backgroundImage = theme.background;
+            }
+            preview.querySelector('.theme-preview-label').textContent = theme.name;
+        }
+
+        function handleCustomBgToggle(e) {
+            const group = document.getElementById('custom-bg-group');
+            group.style.display = e.target.checked ? 'block' : 'none';
+            if (!e.target.checked) {
+                CONFIG.customBackground = '';
+                document.getElementById('custom-bg-url').value = '';
+                showThemePreview();
+            }
+        }
+
+        function handleCustomBgUrlChange(e) {
+            CONFIG.customBackground = e.target.value;
+            showThemePreview();
+        }
+
+        function handleBaseUrlChange(e) {
+            CONFIG.baseUrl = e.target.value;
+        }
+
+        function handleTitleChange(e) {
+            CONFIG.title = e.target.value;
+        }
+
+        function handleDebugModeToggle(e) {
+            CONFIG.debugMode = e.target.checked;
+        }
+
+        // VALIDATION
+        function validateConfig() {
+            const errors = [];
+            if (!CONFIG.baseUrl) errors.push("⚠ SharePoint Basis-URL ist erforderlich");
+            if (CONFIG.baseUrl && !CONFIG.baseUrl.endsWith('/')) errors.push("⚠ Basis-URL muss mit / enden");
+            CONFIG.doors.forEach((door, index) => {
+                if (door.linkUrl && !door.linkText) errors.push("⚠ Türchen " + (index + 1) + ": Link ohne Button-Text");
+                if (door.linkText && !door.linkUrl) errors.push("⚠ Türchen " + (index + 1) + ": Button-Text ohne Link-URL");
+            });
+            if (errors.length > 0) {
+                alert("Validierung fehlgeschlagen:\n\n" + errors.join("\n"));
+                return false;
+            }
+            alert("✓ Validierung erfolgreich!\n\nAlle Einstellungen sind korrekt.");
+            return true;
+        }
+
+        // JSON
+        function saveConfigAsJSON() {
+            const json = JSON.stringify(CONFIG, null, 2);
+            const blob = new Blob([json], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'adventskalender-config.json';
+            a.click();
+            URL.revokeObjectURL(url);
+            alert("✓ Konfiguration wurde als JSON gespeichert!");
+        }
+
+        function loadConfigFromJSON(file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    CONFIG = JSON.parse(e.target.result);
+                    populateFormFields();
+                    updateProgress();
+                    alert("✓ Konfiguration erfolgreich geladen!");
+                } catch (error) {
+                    alert("❌ Fehler beim Laden:\n" + error.message);
+                }
+            };
+            reader.readAsText(file);
+        }
+
+        function populateFormFields() {
+            document.getElementById('theme-select').value = CONFIG.theme;
+            document.getElementById('base-url').value = CONFIG.baseUrl;
+            document.getElementById('calendar-title').value = CONFIG.title;
+            document.getElementById('debug-mode-checkbox').checked = CONFIG.debugMode || false;
+            if (CONFIG.customBackground) {
+                document.getElementById('custom-bg-checkbox').checked = true;
+                document.getElementById('custom-bg-url').value = CONFIG.customBackground;
+                document.getElementById('custom-bg-group').style.display = 'block';
+            }
+            CONFIG.doors.forEach(door => {
+                document.getElementById('door-' + door.day + '-title').value = door.title || '';
+                document.getElementById('door-' + door.day + '-text').value = door.text || '';
+                document.getElementById('door-' + door.day + '-image').value = door.image || '';
+                document.getElementById('door-' + door.day + '-linkUrl').value = door.linkUrl || '';
+                document.getElementById('door-' + door.day + '-linkText').value = door.linkText || '';
+                checkDoorFilled(door.day);
+            });
+            showThemePreview();
+        }
+
+        // EXPORT
+        function exportCalendar() {
+            if (!validateConfig()) return;
+            const html = generateAdventskalenderHTML();
+            const blob = new Blob([html], { type: 'text/html' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'adventskalender.html';
+            a.click();
+            URL.revokeObjectURL(url);
+            alert("🎁 Adventskalender erfolgreich exportiert!");
+        }
+
+        function generateAdventskalenderHTML() {
+            const theme = THEMES[CONFIG.theme];
+            const bg = CONFIG.customBackground ? ("url('" + CONFIG.customBackground + "')") : theme.background;
+            const css = generateCSS(theme, bg);
+            const js = generateJS();
+
+            return '<!DOCTYPE html>\n<html lang="de">\n<head>\n<meta charset="UTF-8">\n<meta name="viewport" content="width=device-width, initial-scale=1.0">\n<title>' + (CONFIG.title || 'Adventskalender') + '</title>\n<style>\n' + css + '\n</style>\n</head>\n<body>\n<div class="calendar-container">\n' + (CONFIG.title ? '<h1 class="calendar-title">' + CONFIG.title + '</h1>\n' : '') + '<div class="calendar-grid" id="calendar-grid"></div>\n</div>\n<div class="modal-overlay" id="modal" onclick="handleOverlayClick(event)">\n<div class="modal-content">\n<button class="modal-close" onclick="closeModal()">&times;</button>\n<h2 class="modal-title" id="modal-title"></h2>\n<img class="modal-image" id="modal-image" style="display:none;" alt="">\n<p class="modal-text" id="modal-text"></p>\n<a class="modal-link" id="modal-link" style="display:none;" target="_blank"></a>\n</div>\n</div>\n<scr' + 'ipt>\n' + js + '\n</scr' + 'ipt>\n</body>\n</html>';
+        }
+
+        function generateCSS(theme, bg) {
+            const doorImages = [
+                'https://images.unsplash.com/photo-1544273677-161f5d1b1b8c?w=400&q=80', // Schneeflocke
+                'https://images.unsplash.com/photo-1513297887119-d46091b24bfa?w=400&q=80', // Weihnachtsbaum
+                'https://images.unsplash.com/photo-1512389142860-9c449e58a543?w=400&q=80', // Geschenke
+                'https://images.unsplash.com/photo-1482517967863-00e15c9b44be?w=400&q=80', // Schneelandschaft
+                'https://images.unsplash.com/photo-1512909006721-3d6018887383?w=400&q=80', // Christbaumkugel rot
+                'https://images.unsplash.com/photo-1543589077-47d81606c1bf?w=400&q=80', // Weihnachtsstern
+                'https://images.unsplash.com/photo-1576919228236-a097c32a5cd4?w=400&q=80', // Weihnachtsmarkt
+                'https://images.unsplash.com/photo-1511988617509-a57c8a288659?w=400&q=80', // Kerzen
+                'https://images.unsplash.com/photo-1545048702-79362596cdc9?w=400&q=80', // Zimtstangen
+                'https://images.unsplash.com/photo-1514897575457-c4db467cf78e?w=400&q=80', // Christbaumkugel gold
+                'https://images.unsplash.com/photo-1482517967863-00e15c9b44be?w=400&q=80', // Winterwald
+                'https://images.unsplash.com/photo-1544273677-161f5d1b1b8c?w=400&q=80', // Schneekristall
+                'https://images.unsplash.com/photo-1512909006721-3d6018887383?w=400&q=80', // Tannenzweig
+                'https://images.unsplash.com/photo-1513297887119-d46091b24bfa?w=400&q=80', // Christbaum nah
+                'https://images.unsplash.com/photo-1512389142860-9c449e58a543?w=400&q=80', // Geschenkband
+                'https://images.unsplash.com/photo-1543589077-47d81606c1bf?w=400&q=80', // Eiskristall
+                'https://images.unsplash.com/photo-1511988617509-a57c8a288659?w=400&q=80', // Lichterkette
+                'https://images.unsplash.com/photo-1576919228236-a097c32a5cd4?w=400&q=80', // Glühwein
+                'https://images.unsplash.com/photo-1545048702-79362596cdc9?w=400&q=80', // Plätzchen
+                'https://images.unsplash.com/photo-1514897575457-c4db467cf78e?w=400&q=80', // Tannenzapfen
+                'https://images.unsplash.com/photo-1482517967863-00e15c9b44be?w=400&q=80', // Schneemann
+                'https://images.unsplash.com/photo-1544273677-161f5d1b1b8c?w=400&q=80', // Eis und Schnee
+                'https://images.unsplash.com/photo-1513297887119-d46091b24bfa?w=400&q=80', // Weihnachtsdeko
+                'https://images.unsplash.com/photo-1512909006721-3d6018887383?w=400&q=80'  // Christbaumschmuck
+            ];
+
+            let doorStyles = '';
+            for (let i = 1; i <= 24; i++) {
+                doorStyles += '.door[data-day="' + i + '"] { background-image: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)), url(' + doorImages[i-1] + '); background-size: cover; background-position: center; }\n';
+            }
+
+            return '* { box-sizing: border-box; margin: 0; padding: 0; }\n' +
+':root {\n' +
+'--primary-color: ' + theme.colors.primary + ';\n' +
+'--secondary-color: ' + theme.colors.secondary + ';\n' +
+'--door-bg: ' + theme.colors.doorBg + ';\n' +
+'--door-border: ' + theme.colors.doorBorder + ';\n' +
+'--door-text: ' + theme.colors.doorText + ';\n' +
+'--modal-bg: ' + theme.colors.modalBg + ';\n' +
+'--modal-border: ' + theme.colors.modalBorder + ';\n' +
+'--font-family: ' + theme.fontFamily + ';\n' +
+'--border-radius: ' + theme.borderRadius + ';\n' +
+'--theme-background: ' + bg + ';\n' +
+'--theme-overlay: ' + theme.overlay + ';\n' +
+'}\n' +
+'body { font-family: var(--font-family); overflow-x: hidden; }\n' +
+'.calendar-container { min-height: 100vh; background-image: var(--theme-background); background-size: cover; background-position: center; background-attachment: fixed; position: relative; padding: 60px 40px; display: flex; flex-direction: column; align-items: center; justify-content: center; }\n' +
+'.calendar-container::before { content: ""; position: absolute; inset: 0; background: var(--theme-overlay); pointer-events: none; }\n' +
+'.calendar-title { text-align: center; font-family: var(--font-family); color: var(--door-text); text-shadow: 2px 2px 4px rgba(0,0,0,0.5); margin-bottom: 40px; position: relative; z-index: 1; font-size: 3rem; }\n' +
+'.calendar-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 25px; max-width: 1400px; width: 100%; margin: 0 auto; position: relative; z-index: 1; }\n' +
+'.door { aspect-ratio: 1; background: var(--door-bg); border: 3px solid var(--door-border); border-radius: var(--border-radius); display: flex; align-items: center; justify-content: center; font-family: var(--font-family); font-size: 1.8rem; font-weight: bold; color: #FFFFFF; cursor: default; transition: transform 0.3s ease, box-shadow 0.3s ease; text-shadow: 2px 2px 4px rgba(0,0,0,0.8), 0 0 10px rgba(0,0,0,0.5); position: relative; box-shadow: 0 4px 8px rgba(0,0,0,0.3); }\n' +
+'.door.available { cursor: pointer; }\n' +
+'.door.available:hover { transform: scale(1.08); box-shadow: 0 0 25px var(--secondary-color), 0 0 50px rgba(255, 215, 0, 0.3); }\n' +
+'.door.opened::after { content: "\\2713"; position: absolute; top: 5px; right: 5px; font-size: 0.8rem; color: var(--secondary-color); text-shadow: 1px 1px 2px rgba(0,0,0,0.5); }\n' +
+doorStyles +
+'.modal-overlay { position: fixed; inset: 0; background: rgba(0, 0, 0, 0.7); display: flex; align-items: center; justify-content: center; z-index: 1000; opacity: 0; visibility: hidden; transition: opacity 0.3s ease, visibility 0.3s ease; }\n' +
+'.modal-overlay.active { opacity: 1; visibility: visible; }\n' +
+'.modal-content { background: var(--modal-bg); border: 4px solid var(--modal-border); border-radius: 12px; max-width: 600px; max-height: 90vh; width: 90%; overflow-y: auto; padding: 30px; position: relative; transform: scale(0.9); transition: transform 0.3s ease; box-shadow: 0 10px 40px rgba(0,0,0,0.5); }\n' +
+'.modal-overlay.active .modal-content { transform: scale(1); }\n' +
+'.modal-close { position: absolute; top: 15px; right: 15px; background: var(--primary-color); color: white; border: none; width: 35px; height: 35px; border-radius: 50%; cursor: pointer; font-size: 1.2rem; font-weight: bold; transition: background 0.3s ease; }\n' +
+'.modal-close:hover { background: var(--secondary-color); color: #333; }\n' +
+'.modal-title { font-family: var(--font-family); color: var(--primary-color); margin-bottom: 20px; text-align: center; font-size: 1.8rem; }\n' +
+'.modal-image { max-width: 80%; height: auto; border-radius: 8px; margin: 0 auto 20px; display: block; }\n' +
+'.modal-text { font-family: var(--font-family); line-height: 1.6; color: #333; margin-bottom: 20px; white-space: pre-wrap; font-size: 1rem; }\n' +
+'.modal-link { display: inline-block; background: var(--primary-color); color: white; padding: 12px 24px; border-radius: 25px; text-decoration: none; font-family: var(--font-family); transition: background 0.3s ease, color 0.3s ease; margin: 0 auto; display: block; width: fit-content; }\n' +
+'.modal-link:hover { background: var(--secondary-color); color: #333; }\n' +
+'@media (max-width: 768px) {\n' +
+'.calendar-container { padding: 40px 20px; }\n' +
+'.calendar-grid { grid-template-columns: repeat(4, 1fr); gap: 15px; }\n' +
+'.door { font-size: 1.4rem; }\n' +
+'.calendar-title { font-size: 2rem; }\n' +
+'.modal-content { padding: 25px; }\n' +
+'}\n' +
+'@media (max-width: 480px) {\n' +
+'.calendar-container { padding: 30px 15px; }\n' +
+'.calendar-grid { grid-template-columns: repeat(3, 1fr); gap: 12px; }\n' +
+'.door { font-size: 1.2rem; border-width: 2px; }\n' +
+'.calendar-title { font-size: 1.5rem; }\n' +
+'.modal-content { padding: 20px; width: 95%; }\n' +
+'.modal-title { font-size: 1.4rem; }\n' +
+'.modal-image { max-width: 100%; }\n' +
+'}';
+        }
+
+        function generateJS() {
+            const configStr = JSON.stringify(CONFIG);
+            return 'const CONFIG = ' + configStr + ';\n' +
+'document.addEventListener("DOMContentLoaded", initCalendar);\n' +
+'function initCalendar() {\n' +
+'const grid = document.getElementById("calendar-grid");\n' +
+'const shuffled = shuffleArray([...CONFIG.doors]);\n' +
+'shuffled.forEach(door => grid.appendChild(createDoorElement(door)));\n' +
+'restoreOpenedDoors();\n' +
+'}\n' +
+'function createDoorElement(door) {\n' +
+'const div = document.createElement("div");\n' +
+'div.className = "door";\n' +
+'div.textContent = door.day;\n' +
+'div.setAttribute("data-day", door.day);\n' +
+'if (isDoorAvailable(door.day)) {\n' +
+'div.classList.add("available");\n' +
+'div.addEventListener("click", () => handleDoorClick(door.day));\n' +
+'}\n' +
+'return div;\n' +
+'}\n' +
+'function shuffleArray(arr) {\n' +
+'for (let i = arr.length - 1; i > 0; i--) {\n' +
+'const j = Math.floor(Math.random() * (i + 1));\n' +
+'[arr[i], arr[j]] = [arr[j], arr[i]];\n' +
+'}\n' +
+'return arr;\n' +
+'}\n' +
+'function isDoorAvailable(day) {\n' +
+'if (CONFIG.debugMode) return true;\n' +
+'const today = new Date();\n' +
+'const currentDay = today.getDate();\n' +
+'const currentMonth = today.getMonth();\n' +
+'if (currentMonth === 11) return day <= currentDay;\n' +
+'if (currentMonth < 11) return false;\n' +
+'return true;\n' +
+'}\n' +
+'function handleDoorClick(day) {\n' +
+'if (!isDoorAvailable(day)) return;\n' +
+'openModal(day);\n' +
+'markDoorAsOpened(day);\n' +
+'}\n' +
+'function openModal(day) {\n' +
+'const door = CONFIG.doors.find(d => d.day === day);\n' +
+'if (!door) return;\n' +
+'const modal = document.getElementById("modal");\n' +
+'document.getElementById("modal-title").textContent = door.title || "Türchen " + day;\n' +
+'const img = document.getElementById("modal-image");\n' +
+'if (door.image) {\n' +
+'const imageUrl = CONFIG.baseUrl + encodeURIComponent(door.image).replace(/%2F/g, "/");\n' +
+'console.log("Lade Bild:", imageUrl);\n' +
+'img.src = imageUrl;\n' +
+'img.style.display = "block";\n' +
+'img.onerror = () => {\n' +
+'img.style.display = "none";\n' +
+'console.error("Bild konnte nicht geladen werden:", imageUrl);\n' +
+'console.error("Mögliche Ursachen: 1) Datei existiert nicht, 2) SharePoint-Berechtigungen, 3) Dateiname falsch geschrieben");\n' +
+'};\n' +
+'img.onload = () => {\n' +
+'console.log("Bild erfolgreich geladen:", imageUrl);\n' +
+'};\n' +
+'} else {\n' +
+'img.style.display = "none";\n' +
+'}\n' +
+'document.getElementById("modal-text").textContent = door.text || "";\n' +
+'const link = document.getElementById("modal-link");\n' +
+'if (door.linkUrl && door.linkText) {\n' +
+'link.href = door.linkUrl;\n' +
+'link.textContent = door.linkText;\n' +
+'link.style.display = "inline-block";\n' +
+'} else {\n' +
+'link.style.display = "none";\n' +
+'}\n' +
+'modal.classList.add("active");\n' +
+'document.addEventListener("keydown", handleEscapeKey);\n' +
+'}\n' +
+'function closeModal() {\n' +
+'const modal = document.getElementById("modal");\n' +
+'modal.classList.remove("active");\n' +
+'document.removeEventListener("keydown", handleEscapeKey);\n' +
+'}\n' +
+'function handleEscapeKey(e) {\n' +
+'if (e.key === "Escape") closeModal();\n' +
+'}\n' +
+'function handleOverlayClick(e) {\n' +
+'if (e.target.id === "modal") closeModal();\n' +
+'}\n' +
+'function markDoorAsOpened(day) {\n' +
+'const door = document.querySelector(".door[data-day=\\"" + day + "\\"]");\n' +
+'if (door) door.classList.add("opened");\n' +
+'const opened = JSON.parse(sessionStorage.getItem("openedDoors") || "[]");\n' +
+'if (!opened.includes(day)) {\n' +
+'opened.push(day);\n' +
+'sessionStorage.setItem("openedDoors", JSON.stringify(opened));\n' +
+'}\n' +
+'}\n' +
+'function restoreOpenedDoors() {\n' +
+'const opened = JSON.parse(sessionStorage.getItem("openedDoors") || "[]");\n' +
+'opened.forEach(day => {\n' +
+'const door = document.querySelector(".door[data-day=\\"" + day + "\\"]");\n' +
+'if (door) door.classList.add("opened");\n' +
+'});\n' +
+'}';
+        }
+    </script>
+</body>
+</html>
