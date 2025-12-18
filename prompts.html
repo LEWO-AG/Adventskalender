@@ -1,0 +1,623 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>5 KI-optimierte Beispiel-Prompts</title>
+  <style>
+    :root{
+      --bg1: #fbfdff;
+      --bg2: #f1f7ff;
+
+      --card: rgba(255,255,255,0.90);
+      --text: #111827;
+      --muted: #4b5563;
+
+      --border: rgba(17,24,39,0.10);
+      --shadow: 0 18px 46px rgba(17,24,39,0.10);
+      --radius: 18px;
+
+      /* Christmas palette (subtle) */
+      --blue: #1d4ed8;
+      --green:#15803d;
+      --red:  #dc2626;
+      --gold: #d4a11d;
+
+      --codebg: rgba(2,6,23,0.04);
+      --focus: rgba(29,78,216,0.35);
+
+      --maxw: 980px;
+    }
+
+    *{ box-sizing: border-box; }
+    html, body{ height: 100%; }
+    body{
+      margin: 0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+      color: var(--text);
+      line-height: 1.5;
+      background-color: var(--bg1);
+
+      /* Light winter base */
+      background-image:
+        radial-gradient(950px 520px at 18% 0%, rgba(29,78,216,0.12), transparent 62%),
+        radial-gradient(900px 520px at 85% 12%, rgba(21,128,61,0.10), transparent 58%),
+        radial-gradient(860px 520px at 55% 105%, rgba(220,38,38,0.08), transparent 62%),
+        /* subtle snowflake tile */
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220' viewBox='0 0 220 220'%3E%3Cg fill='none' stroke='%23000000' stroke-opacity='0.055' stroke-width='2'%3E%3Cpath d='M110 28v164'/%3E%3Cpath d='M28 110h164'/%3E%3Cpath d='M52 52l116 116'/%3E%3Cpath d='M168 52L52 168'/%3E%3C/g%3E%3C/svg%3E");
+      background-repeat: no-repeat, no-repeat, no-repeat, repeat;
+      background-size: auto, auto, auto, 240px 240px;
+      background-position: center, center, center, 0 0;
+    }
+
+    .wrap{
+      max-width: var(--maxw);
+      margin: 0 auto;
+      padding: 28px 18px 56px;
+    }
+
+    /* Festive top banner */
+    .topbar{
+      position: relative;
+      border-radius: 22px;
+      padding: 18px 18px 16px;
+      border: 1px solid var(--border);
+      background:
+        linear-gradient(180deg, rgba(255,255,255,0.92), rgba(255,255,255,0.82));
+      box-shadow: 0 18px 40px rgba(17,24,39,0.08);
+      overflow: hidden;
+      margin-bottom: 18px;
+    }
+
+    /* Candy-cane ribbon (very subtle) */
+    .topbar::before{
+      content:"";
+      position:absolute;
+      inset:0;
+      background:
+        repeating-linear-gradient(135deg,
+          rgba(220,38,38,0.10) 0 12px,
+          rgba(255,255,255,0.0) 12px 24px,
+          rgba(21,128,61,0.08) 24px 36px,
+          rgba(255,255,255,0.0) 36px 48px
+        );
+      opacity: 0.35;
+      pointer-events:none;
+    }
+
+    /* String lights along the top edge */
+    .lights{
+      position:absolute;
+      left: 14px;
+      right: 14px;
+      top: 10px;
+      height: 26px;
+      pointer-events:none;
+      opacity: 0.9;
+      background:
+        radial-gradient(circle at 10px 18px, rgba(212,161,29,0.92) 0 4px, rgba(212,161,29,0) 5px),
+        radial-gradient(circle at 40px 12px, rgba(29,78,216,0.88) 0 4px, rgba(29,78,216,0) 5px),
+        radial-gradient(circle at 70px 18px, rgba(220,38,38,0.88) 0 4px, rgba(220,38,38,0) 5px),
+        radial-gradient(circle at 100px 12px, rgba(21,128,61,0.88) 0 4px, rgba(21,128,61,0) 5px);
+      background-size: 120px 26px;
+      background-repeat: repeat-x;
+      filter: drop-shadow(0 6px 10px rgba(17,24,39,0.10));
+    }
+
+    header{
+      position: relative;
+      z-index: 1;
+      display: grid;
+      gap: 10px;
+      padding-top: 14px;
+    }
+
+    .badge{
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 9px 12px;
+      width: fit-content;
+      background: rgba(255,255,255,0.78);
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      color: var(--muted);
+      font-size: 13px;
+      letter-spacing: 0.2px;
+      box-shadow: 0 12px 26px rgba(17,24,39,0.06);
+      backdrop-filter: blur(8px);
+    }
+
+    .badgeIcon{
+      width: 18px;
+      height: 18px;
+      display: inline-block;
+    }
+
+    h1{
+      margin: 0;
+      font-size: clamp(22px, 2.6vw, 34px);
+      letter-spacing: -0.02em;
+    }
+
+    .subtitle{
+      margin: 0;
+      color: var(--muted);
+      max-width: 78ch;
+      font-size: 15.5px;
+    }
+
+    .grid{
+      display: grid;
+      gap: 14px;
+      margin-top: 14px;
+    }
+
+    .card{
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      backdrop-filter: blur(8px);
+    }
+
+    .cardHeader{
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 16px 16px 12px;
+      background:
+        linear-gradient(90deg, rgba(220,38,38,0.10), rgba(212,161,29,0.08), rgba(21,128,61,0.10)),
+        linear-gradient(180deg, rgba(255,255,255,0.70), rgba(255,255,255,0.0));
+      border-bottom: 1px solid rgba(17,24,39,0.06);
+    }
+
+    .cardTitle{
+      display: grid;
+      gap: 3px;
+    }
+
+    .cardTitle h2{
+      margin: 0;
+      font-size: 16.5px;
+      letter-spacing: -0.01em;
+    }
+
+    .hint{
+      margin: 0;
+      color: var(--muted);
+      font-size: 13.5px;
+    }
+
+    .actions{
+      display: inline-flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    button{
+      appearance: none;
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,0.80);
+      color: var(--text);
+      border-radius: 12px;
+      padding: 9px 11px;
+      font-size: 13.5px;
+      cursor: pointer;
+      transition: transform 0.06s ease, background 0.18s ease, border-color 0.18s ease;
+      user-select: none;
+      box-shadow: 0 10px 22px rgba(17,24,39,0.06);
+    }
+
+    button:hover{ background: rgba(255,255,255,0.96); border-color: rgba(17,24,39,0.16); }
+    button:active{ transform: translateY(1px); }
+    button:focus-visible{
+      outline: 2px solid var(--focus);
+      outline-offset: 2px;
+    }
+
+    .primary{
+      border-color: rgba(21,128,61,0.22);
+      background:
+        linear-gradient(135deg, rgba(21,128,61,0.10), rgba(29,78,216,0.08));
+    }
+
+    .content{
+      padding: 0 16px 16px;
+    }
+
+    pre{
+      margin: 0;
+      padding: 14px 14px;
+      background: var(--codebg);
+      border: 1px solid rgba(17,24,39,0.10);
+      border-radius: 14px;
+      overflow: auto;
+      white-space: pre-wrap;
+      word-break: break-word;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      font-size: 13.5px;
+      line-height: 1.45;
+    }
+
+    .footerNote{
+      margin-top: 18px;
+      padding: 14px 16px;
+      background: rgba(255,255,255,0.82);
+      border: 1px dashed rgba(17,24,39,0.18);
+      border-radius: 14px;
+      color: var(--muted);
+      font-size: 13.5px;
+      box-shadow: 0 12px 26px rgba(17,24,39,0.06);
+    }
+
+    .toast{
+      position: fixed;
+      left: 50%;
+      bottom: 18px;
+      transform: translateX(-50%);
+      background: rgba(17,24,39,0.86);
+      border: 1px solid rgba(255,255,255,0.22);
+      color: #ffffff;
+      padding: 10px 12px;
+      border-radius: 999px;
+      font-size: 13.5px;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.18s ease, transform 0.18s ease;
+      backdrop-filter: blur(10px);
+    }
+    .toast.show{
+      opacity: 1;
+      transform: translateX(-50%) translateY(-2px);
+    }
+
+    /* Gentle snow (decorative), disabled for reduced motion */
+    .snow{
+      position: fixed;
+      inset: 0;
+      pointer-events:none;
+      opacity: 0.45;
+      z-index: 0;
+      background-image:
+        radial-gradient(circle, rgba(255,255,255,0.85) 0 2px, rgba(255,255,255,0) 3px),
+        radial-gradient(circle, rgba(255,255,255,0.70) 0 1.5px, rgba(255,255,255,0) 3px),
+        radial-gradient(circle, rgba(255,255,255,0.55) 0 1.2px, rgba(255,255,255,0) 3px);
+      background-size: 120px 120px, 160px 160px, 220px 220px;
+      background-position: 0 0, 60px 40px, 120px 80px;
+      animation: snowFall 14s linear infinite;
+      mix-blend-mode: soft-light;
+    }
+    @keyframes snowFall{
+      from{ transform: translateY(-40px); }
+      to{ transform: translateY(220px); }
+    }
+
+    @media (prefers-reduced-motion: reduce){
+      .snow{ display:none; }
+      *{ transition: none !important; }
+      button:active{ transform: none; }
+      .toast.show{ transform: translateX(-50%); }
+    }
+  </style>
+</head>
+<body>
+  <div class="snow" aria-hidden="true"></div>
+
+  <div class="wrap">
+    <div class="topbar">
+      <div class="lights" aria-hidden="true"></div>
+      <header>
+<h1>5 KI-optimierte Beispiel-Prompts</h1>
+        <p class="subtitle">
+          Diese Vorlagen sind so geschrieben, dass Nutzende zusätzliche Inhalte (z. B. Texte, Tabellen, Vorlagen) einfügen oder als Datei hochladen können.
+          Alle Prompts sind zu Beginn eingeklappt und lassen sich einzeln öffnen.
+        </p>
+      </header>
+    </div>
+
+    <main class="grid" style="position:relative; z-index:1;">
+
+      <!-- 1 -->
+      <section class="card" id="p1">
+        <div class="cardHeader">
+          <div class="cardTitle">
+            <h2>1) E-Mails entwerfen und Tonalität anpassen</h2>
+            <p class="hint">Für Antworten, Klärungen, Nachfass-E-Mails und abgestimmten Ton.</p>
+          </div>
+          <div class="actions">
+            <button class="primary" data-copy="#t1">Prompt kopieren</button>
+            <button data-toggle="#t1" data-label-open="Anzeigen" data-label-close="Ausblenden">Anzeigen</button>
+          </div>
+        </div>
+        <div class="content">
+<pre id="t1">Beispiel-Prompt (zum Kopieren)  
+Du unterstützt mich beim Verfassen professioneller E-Mails im Arbeitskontext.  
+Ziel: Formuliere eine passende Antwort, die sachlich korrekt, freundlich und klar handlungsorientiert ist.
+
+### Hintergrund
+- Meine Rolle: {z. B. Kundenbetreuung / Projektleitung / Vertrieb}  
+- Empfänger: {Kunde/Partner/kollegiale Person, ggf. Funktion}  
+- Beziehung/Status: {neu/bestehend, angespannt/neutral/gut}  
+- Ziel der E-Mail: {z. B. Termin abstimmen, Problem klären, Angebot nachfassen}  
+- Ton: {z. B. freundlich-bestimmt, sachlich, wertschätzend, formal}  
+- Anrede: {Sie/Du}
+
+### Eingaben (hier einfügen oder als Datei hochladen)
+1) Ursprüngliche Nachricht bzw. Verlauf (vollständig)  
+2) Relevante Fakten (z. B. Vereinbarungen, Zahlen, Aussagen, Bedingungen)  
+3) Optional: Beispiel-E-Mail(s), die den gewünschten Stil zeigen  
+4) Optional: Vorgaben (z. B. Wörter vermeiden, feste Textbausteine, Signatur)
+
+### Anforderungen
+- Erfinde keine Fakten. Wenn Informationen fehlen, stelle zuerst gezielte Rückfragen (höchstens 5).  
+- Gliedere die E-Mail: Betreffzeile, kurze Einleitung, Kernaussagen, nächster Schritt, Abschluss.  
+- Möglichst klar und ohne Floskeln.
+
+### Ausgabe
+1) Sendefertiger E-Mail-Text  
+2) Liste „Fehlende Informationen oder Annahmen“ (falls vorhanden)  
+3) Optional: 2 alternative Betreffzeilen</pre>
+        </div>
+      </section>
+
+      <!-- 2 -->
+      <section class="card" id="p2">
+        <div class="cardHeader">
+          <div class="cardTitle">
+            <h2>2) Dokumente in eine kurze Zusammenfassung für Entscheider überführen</h2>
+            <p class="hint">Für Entscheidungsgrundlagen aus längeren Texten.</p>
+          </div>
+          <div class="actions">
+            <button class="primary" data-copy="#t2">Prompt kopieren</button>
+            <button data-toggle="#t2" data-label-open="Anzeigen" data-label-close="Ausblenden">Anzeigen</button>
+          </div>
+        </div>
+        <div class="content">
+<pre id="t2">Beispiel-Prompt (zum Kopieren)  
+Du erstellst aus längeren Texten eine kurze Zusammenfassung, die eine Entscheidung vorbereitet.
+
+### Zielgruppe
+{z. B. Geschäftsführung / Bereichsleitung / Projektgremium} mit wenig Zeit.
+
+### Eingaben (als Datei hochladen oder hier einfügen)
+- Text/Dokument(e), die zusammengefasst werden sollen  
+- Optional: Beispiel, wie die gewünschte Zusammenfassung aussehen soll (Vorlage)
+
+### Aufgaben
+1) Erstelle eine Zusammenfassung mit maximal einer Seite mit:
+   - Ausgangslage und Ziel
+   - wichtigste Erkenntnisse (5–7 Stichpunkte)
+   - Bedeutung für das Geschäft bzw. die Arbeit
+   - Risiken und offene Punkte
+   - Empfehlung (konkret und nach Wichtigkeit geordnet)
+   - „Was zu entscheiden ist“ (was genau, bis wann)
+2) Wenn Aussagen im Text nicht eindeutig belegt sind, kennzeichne sie als „unklar“ und stelle Rückfragen.
+
+### Regeln
+- Nur Inhalte aus den Eingaben verwenden.  
+- Zahlen und Aussagen exakt übernehmen.  
+- Sprache: klar, kurz, entscheidungsorientiert.
+
+### Ausgabeformat (bitte genau einhalten)
+- **Titel:**  
+- **Kurzfazit (2–3 Sätze):**  
+- **Wichtigste Erkenntnisse:** (Stichpunkte)  
+- **Empfehlung:** (nach Wichtigkeit geordnet)  
+- **Risiken und Unklarheiten:**  
+- **Nächste Schritte und Entscheidungspunkte:**</pre>
+        </div>
+      </section>
+
+      <!-- 3 -->
+      <section class="card" id="p3">
+        <div class="cardHeader">
+          <div class="cardTitle">
+            <h2>3) Arbeitsanweisung aus Stichpunkten erstellen</h2>
+            <p class="hint">Für klare Schritt-für-Schritt-Anleitungen inklusive Checkliste.</p>
+          </div>
+          <div class="actions">
+            <button class="primary" data-copy="#t3">Prompt kopieren</button>
+            <button data-toggle="#t3" data-label-open="Anzeigen" data-label-close="Ausblenden">Anzeigen</button>
+          </div>
+        </div>
+        <div class="content">
+<pre id="t3">Beispiel-Prompt (zum Kopieren)  
+Du erstellst aus meinen Stichpunkten eine verständliche Arbeitsanweisung, die neue Mitarbeitende sicher befolgen können.
+
+### Eingaben (als Datei hochladen oder hier einfügen)
+- Stichpunkte / Notizen / vorhandene Prozessbeschreibung  
+- Optional: vorhandene Vorlage oder Beispiel-Format für Arbeitsanweisungen  
+- Optional: Zuständigkeiten, verwendete Werkzeuge und Systeme, wichtige Links
+
+### Anforderungen an die Arbeitsanweisung
+- Zweck und Geltungsbereich (wofür gilt die Anleitung, wofür nicht)  
+- Zuständigkeiten (wer macht was, wer gibt frei, wer wird informiert)  
+- Voraussetzungen (Zugänge, Daten, Werkzeuge, Berechtigungen)  
+- Schritt-für-Schritt-Anleitung (nummeriert, mit klaren Entscheidungspunkten)  
+- Qualitätsprüfungen (woran erkennt man „fertig und korrekt“)  
+- Sonderfälle und Fehlerbehandlung (was tun, wenn etwas nicht klappt)  
+- Kurze Checkliste am Ende
+
+### Vorgehen
+1) Wenn entscheidende Angaben fehlen, stelle solange Rückfragen bis alles eindeutig und klar ist.  
+2) Danach schreibe die Arbeitsanweisung in sauberer Struktur und einfacher Sprache.
+
+### Ausgabe
+- Vollständige Arbeitsanweisung mit Überschriften  
+- Zusätzlich: separate **Checkliste** (zum Kopieren)</pre>
+        </div>
+      </section>
+
+      <!-- 4 -->
+      <section class="card" id="p4">
+        <div class="cardHeader">
+          <div class="cardTitle">
+            <h2>4) Excel: Aus Daten eine Auswertung entwickeln (Schritte und Formeln)</h2>
+            <p class="hint">Für nachvollziehbare Auswertungen inklusive kopierbarer Formeln.</p>
+          </div>
+          <div class="actions">
+            <button class="primary" data-copy="#t4">Prompt kopieren</button>
+            <button data-toggle="#t4" data-label-open="Anzeigen" data-label-close="Ausblenden">Anzeigen</button>
+          </div>
+        </div>
+        <div class="content">
+<pre id="t4">Beispiel-Prompt (zum Kopieren)  
+Du unterstützt mich bei einer Auswertung in Excel. Ich lade eine Excel-Datei hoch oder füge Tabellenausschnitte ein. Du sollst mir eine stabile Lösung liefern: Vorgehen, konkrete Formeln und Hinweise zur Prüfung.
+
+### Eingaben (als Datei hochladen oder hier einfügen)
+- Excel-Datei oder Tabellenausschnitt  
+- Fragestellung/Ziel: {z. B. „Umsatz nach Region und Monat“, „Top-10 Kunden nach Gewinn“, „Dubletten finden“}  
+- Optional: Beispiel, wie die Ergebnis-Tabelle aussehen soll (Spaltennamen, Reihenfolge, Muster)
+
+### Anforderungen
+- Nutze gängige Excel-Funktionen und erkläre sie verständlich.  
+- Wenn mehrere Lösungswege möglich sind: empfehle den zuverlässigsten und begründe kurz.  
+- Formeln so angeben, dass sie direkt kopierbar sind (mit klaren Zell- oder Spaltenbezügen).  
+- Berücksichtige typische Datenprobleme: leere Felder, falsche Datumsformate, doppelte Einträge.
+
+### Vorgehen
+1) Prüfe die Tabellenstruktur: Spalten, Datentypen, fehlende Werte, eindeutige Kennzeichen.  
+2) Wenn etwas unklar ist, stelle gezielte Rückfragen (z. B. welche Spalte eindeutig ist, welches Datum zählt).  
+3) Liefere:
+   - Schritt-für-Schritt-Anleitung  
+   - benötigte Formeln (mit kurzer Erklärung)  
+   - alternative Lösung, falls sinnvoll (z. B. Auswertung über eine Pivot-Tabelle)  
+   - Prüfschritte (woran erkennt man, dass das Ergebnis stimmt)
+
+### Ausgabe
+- **Schnelle Lösung**  
+- **Empfohlene, robuste Lösung**  
+- **Formeln und Schritte (zum Kopieren)**  
+- **Prüfschritte und typische Fehler</pre>
+        </div>
+      </section>
+
+      <!-- 5 -->
+      <section class="card" id="p5">
+        <div class="cardHeader">
+          <div class="cardTitle">
+            <h2>5) Textprüfung: Anforderungen und Spezifikationen verbessern</h2>
+            <p class="hint">Für bessere Verständlichkeit, Vollständigkeit und Prüfbarkeit.</p>
+          </div>
+          <div class="actions">
+            <button class="primary" data-copy="#t5">Prompt kopieren</button>
+            <button data-toggle="#t5" data-label-open="Anzeigen" data-label-close="Ausblenden">Anzeigen</button>
+          </div>
+        </div>
+        <div class="content">
+<pre id="t5">Beispiel-Prompt (zum Kopieren)  
+Du prüfst einen Text mit Anforderungen oder eine technische Beschreibung streng, aber konstruktiv. Ziel ist maximale Verständlichkeit, Vollständigkeit und Prüfbarkeit.
+
+### Eingaben (als Datei hochladen oder hier einfügen)
+- Text mit Anforderungen / Konzept / Beschreibung  
+- Optional: gewünschtes Format (z. B. „Anforderung als Satz + Akzeptanzkriterien“)  
+- Optional: interne Vorgaben (z. B. Begriffe, Qualitätsmaßstäbe, rechtliche Hinweise)
+
+### Prüfkriterien
+Bitte bewerte und verbessere den Text in diesen Punkten:
+- Verständlichkeit und Eindeutigkeit (keine unklaren Wörter wie „schnell“, „einfach“, „intuitiv“)  
+- Vollständigkeit (Annahmen, Abhängigkeiten, Randfälle)  
+- Prüfbarkeit (klare Kriterien, wie man die Erfüllung nachweist)  
+- Konsistenz (Begriffe werden einheitlich verwendet, keine Widersprüche)  
+- Risiken (Datenschutz, Zugriffsschutz, Leistungsfähigkeit, Betrieb)  
+- Nicht-Ziele (was ausdrücklich nicht Teil des Vorhabens ist)
+
+### Vorgehen
+1) Liste zuerst die 10 wichtigsten Probleme auf (mit Einstufung: hoch / mittel / niedrig) und nenne jeweils die betroffene Textstelle.  
+2) Stelle danach so lange Rückfragen, bis alle Unklarheiten beseitigt sind.  
+3) Erstelle anschließend eine überarbeitete Version im gewünschten Format, inklusive:
+   - klare Akzeptanzkriterien (z. B. „Wenn … dann …“ in überprüfbarer Form)  
+   - Liste offener Punkte und Annahmen  
+   - Vorschlag, wie man den Erfolg messen oder überwachen kann
+
+### Ausgabe
+- **Liste der Probleme (nach Wichtigkeit)**  
+- **Rückfragen**  
+- **Überarbeiteter Text**  
+- **Akzeptanzkriterien**  
+- **Risiken und nächste Schritte**</pre>
+        </div>
+      </section>
+
+      <div class="footerNote">
+        Tipp: Wenn du eine eigene Ausgabe-Vorlage hast (z. B. E-Mail-Stil, Zusammenfassungsformat, Tabellenlayout), lade sie zusätzlich hoch oder füge sie unter „Eingaben“ ein.
+        Das erhöht die Konsistenz der Ergebnisse deutlich.
+      </div>
+
+    </main>
+  </div>
+
+  <div class="toast" id="toast" role="status" aria-live="polite">Kopiert.</div>
+
+  <script>
+    const toast = document.getElementById('toast');
+    let toastTimer = null;
+
+    function showToast(text){
+      toast.textContent = text || 'Kopiert.';
+      toast.classList.add('show');
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => toast.classList.remove('show'), 1300);
+    }
+
+    function setCollapsed(pre, button, collapsed){
+      pre.style.display = collapsed ? 'none' : 'block';
+      const openLabel = button.getAttribute('data-label-open') || 'Anzeigen';
+      const closeLabel = button.getAttribute('data-label-close') || 'Ausblenden';
+      button.textContent = collapsed ? openLabel : closeLabel;
+      button.setAttribute('aria-expanded', collapsed ? 'false' : 'true');
+    }
+
+    async function copyTextFromSelector(sel){
+      const el = document.querySelector(sel);
+      if(!el) return;
+      const text = el.textContent.replace(/\u00A0/g, ' ');
+      try{
+        await navigator.clipboard.writeText(text);
+        showToast('Prompt kopiert.');
+      }catch(e){
+        const ta = document.createElement('textarea');
+        ta.value = text;
+        ta.setAttribute('readonly', '');
+        ta.style.position = 'fixed';
+        ta.style.left = '-9999px';
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand('copy');
+        document.body.removeChild(ta);
+        showToast('Prompt kopiert.');
+      }
+    }
+
+    // Start: all prompts collapsed
+    document.querySelectorAll('pre[id^="t"]').forEach((pre) => {
+      pre.style.display = 'none';
+    });
+    document.querySelectorAll('button[data-toggle]').forEach((btn) => {
+      btn.setAttribute('aria-expanded', 'false');
+      btn.textContent = btn.getAttribute('data-label-open') || 'Anzeigen';
+    });
+
+    document.addEventListener('click', (ev) => {
+      const btnCopy = ev.target.closest('[data-copy]');
+      if(btnCopy){
+        copyTextFromSelector(btnCopy.getAttribute('data-copy'));
+      }
+
+      const btnToggle = ev.target.closest('[data-toggle]');
+      if(btnToggle){
+        const targetSel = btnToggle.getAttribute('data-toggle');
+        const pre = document.querySelector(targetSel);
+        if(!pre) return;
+        const collapsed = pre.style.display === 'none';
+        setCollapsed(pre, btnToggle, !collapsed);
+        showToast(collapsed ? 'Eingeblendet.' : 'Ausgeblendet.');
+      }
+    });
+  </script>
+</body>
+</html>
